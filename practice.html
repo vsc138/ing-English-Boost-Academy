@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Practicar — English Boost Academy</title>
+  <link rel="icon" type="image/jpeg" href="assets/logo.jpg" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/practice.css" />
+</head>
+<body>
+
+  <!-- Fondo animado -->
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- Toasts -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ===================== HEADER DE PRACTICA ===================== -->
+  <header class="practice-header">
+    <div class="flex items-center gap-2">
+      <button class="btn-back" onclick="goBack()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <img src="assets/logo.jpg" alt="Logo EBA" class="brand-logo-mini" style="width:28px;height:28px;border-radius:8px" />
+    </div>
+    <div class="practice-info">
+      <span class="practice-mode-label" id="modeLabel">Practica</span>
+      <div class="progress-bar" style="width:180px"><div class="progress-fill" id="sessionProgress" style="width:0%"></div></div>
+    </div>
+    <div class="practice-score-chip">
+      <span class="badge badge-primary" style="font-size:0.75rem;padding:2px 8px">Vidas: <span id="livesLeft">3</span></span>
+      <span class="badge badge-secondary" style="font-size:0.75rem;padding:2px 8px;margin-left:6px">Progreso: <span id="exercisesCount">0</span>/<span id="exercisesTotal">10</span></span>
+    </div>
+  </header>
+
+  <!-- ===================== MENU SELECTOR ===================== -->
+  <section id="screen-menu" class="practice-screen page-enter">
+    <div class="menu-container">
+      <h2 class="menu-title">Elige que modulo deseas practicar</h2>
+      <p class="text-muted" style="margin-bottom:28px;text-align:center">Sesiones continuas de 10 ejercicios con evaluacion final</p>
+
+      <div class="module-grid">
+        <div class="module-card card" onclick="startModule('translate')">
+          <div class="module-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+          <div class="module-name">Traduccion</div>
+          <div class="module-desc">Traduce frases del espanol al ingles y viceversa</div>
+          <div class="module-meta"><span class="badge badge-primary">10 ejercicios</span><span class="badge badge-green">+5 XP c/u</span></div>
+        </div>
+        <div class="module-card card" onclick="startModule('vocab')">
+          <div class="module-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+          <div class="module-name">Vocabulario</div>
+          <div class="module-desc">Aprende palabras con opcion multiple — objetos y animales</div>
+          <div class="module-meta"><span class="badge badge-primary">10 ejercicios</span><span class="badge badge-green">+3 XP c/u</span></div>
+        </div>
+        <div class="module-card card" onclick="startModule('sentences')">
+          <div class="module-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent-yellow)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          <div class="module-name">Frases del dia</div>
+          <div class="module-desc">Aprende frases cotidianas en ingles con opcion multiple</div>
+          <div class="module-meta"><span class="badge badge-primary">10 ejercicios</span><span class="badge badge-green">+4 XP c/u</span></div>
+        </div>
+        <div class="module-card card" onclick="startModule('quiz')">
+          <div class="module-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+          <div class="module-name">Evaluacion</div>
+          <div class="module-desc">Prueba mixta — calificacion del 1 al 10 al finalizar</div>
+          <div class="module-meta"><span class="badge badge-red">Calificado</span><span class="badge badge-yellow">+20 XP</span></div>
+        </div>
+      </div>
+
+      <div class="difficulty-selector">
+        <p class="text-muted text-small" style="margin-bottom:10px;text-align:center">Nivel de dificultad</p>
+        <div class="diff-btns">
+          <button class="diff-btn active" data-diff="1" onclick="setDifficulty(1, this)">Facil</button>
+          <button class="diff-btn" data-diff="2" onclick="setDifficulty(2, this)">Medio</button>
+          <button class="diff-btn" data-diff="3" onclick="setDifficulty(3, this)">Dificil</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== VOCABULARIO / FRASES (OPCION MULTIPLE) ===================== -->
+  <section id="screen-vocab" class="practice-screen hidden">
+    <div class="exercise-container page-enter">
+
+      <div class="exercise-card card">
+        <!-- Categoria y palabra -->
+        <div class="word-display">
+          <div class="word-category-badge" id="wordEmoji">
+            <span class="badge badge-primary">Vocabulario</span>
+          </div>
+          <div class="word-label" id="wordLabel">Perro</div>
+          <div class="word-context text-muted text-small" id="wordContext">¿Como se dice en ingles?</div>
+        </div>
+
+        <!-- Opciones -->
+        <div class="options-grid" id="optionsGrid"></div>
+
+        <!-- Retroalimentacion -->
+        <div class="feedback hidden" id="vocabFeedback"></div>
+
+        <!-- Boton siguiente -->
+        <button class="btn btn-primary btn-full hidden" id="nextVocabBtn" onclick="nextExercise()">
+          Siguiente <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== TRADUCCION ===================== -->
+  <section id="screen-translate" class="practice-screen hidden">
+    <div class="exercise-container page-enter">
+
+      <div class="exercise-card card">
+        <div class="translate-header">
+          <div class="translate-dir" id="translateDir"><span class="badge badge-secondary">Espanol a Ingles</span></div>
+          <div class="translate-instruction text-muted text-small">Redacta la traduccion en el campo de abajo</div>
+        </div>
+
+        <div class="source-phrase" id="sourcePhrase">Hola, ¿como estas?</div>
+
+        <div class="translate-input-wrap">
+          <textarea
+            id="translateInput"
+            class="translate-textarea"
+            placeholder="Escribe tu traduccion aqui..."
+            rows="3"
+            onkeydown="handleTranslateKey(event)"
+          ></textarea>
+          <button class="btn btn-primary" id="checkTranslateBtn" onclick="checkTranslation()">
+            Verificar
+          </button>
+        </div>
+
+        <!-- Ayuda / Pista -->
+        <button class="hint-btn" id="hintBtn" onclick="showHint()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Ver pista (-1 XP)
+        </button>
+        <div class="hint-text hidden" id="hintText"></div>
+
+        <!-- Resultado -->
+        <div class="translate-result hidden" id="translateResult"></div>
+
+        <!-- Siguiente -->
+        <button class="btn btn-primary btn-full hidden" id="nextTranslateBtn" onclick="nextExercise()">
+          Siguiente <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== VOZ: SELECTOR DE TEMAS ===================== -->
+  <section id="screen-voice-topics" class="practice-screen hidden">
+    <div class="menu-container">
+      <h2 class="menu-title">Elige un tema de conversacion</h2>
+      <p class="text-muted" style="margin-bottom:28px;text-align:center">La app te hablara en ingles. Tu respondes en voz alta.</p>
+      <div class="module-grid" id="topicsGrid"></div>
+      <div style="text-align:center;margin-top:16px">
+        <button class="btn btn-secondary" onclick="goBack()">Volver al menu</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== VOZ: CHAT ===================== -->
+  <section id="screen-voice-chat" class="practice-screen hidden">
+    <div class="voice-chat-container">
+      <div class="voice-topic-bar">
+        <span id="voiceTopicIcon" class="voice-topic-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+        <div class="voice-topic-info">
+          <span id="voiceModeLabel" class="voice-topic-name">Tema</span>
+          <div class="progress-bar" style="width:160px"><div class="progress-fill" id="voiceSessionProgress" style="width:0%"></div></div>
+        </div>
+        <div class="voice-counter"><span id="voiceExCount">0</span>/<span id="voiceExTotal">5</span></div>
+      </div>
+
+      <div class="chat-bubble app-bubble">
+        <div class="bubble-avatar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+        <div class="bubble-content">
+          <div class="bubble-label">English Boost</div>
+          <div class="bubble-text" id="voicePromptText">...</div>
+          <div class="bubble-sub" id="voicePromptEs"></div>
+          <button class="repeat-btn" onclick="repeatPrompt()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+            Repetir
+          </button>
+        </div>
+      </div>
+
+      <div class="chat-bubble user-bubble">
+        <div class="bubble-content user-content">
+          <div class="bubble-label">Tu</div>
+          <div class="bubble-transcript" id="voiceTranscript">Presiona el microfono para hablar...</div>
+        </div>
+        <div class="bubble-avatar user-avatar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      </div>
+
+      <div class="voice-feedback hidden" id="voiceFeedback"></div>
+
+      <div class="voice-tip-wrap">
+        <button class="hint-btn" onclick="showVoiceTip()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Ver pista (-2 XP)
+        </button>
+        <div class="hint-text hidden" id="voiceTip"><span id="voiceTipText"></span></div>
+      </div>
+
+      <div class="mic-section">
+        <div class="mic-ring" id="voiceMicRing">
+          <button class="mic-btn mic-idle" id="voiceMicBtn" onclick="toggleMic()">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
+              <path d="M19 10v2a7 7 0 01-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="23"/>
+              <line x1="8"  y1="23" x2="16" y2="23"/>
+            </svg>
+          </button>
+        </div>
+        <div class="mic-label" id="voiceMicLabel">Presiona para hablar</div>
+        <div class="voice-actions">
+          <button class="btn btn-secondary" id="voiceSkipBtn" onclick="skipExchange()">Saltar</button>
+          <button class="btn btn-primary hidden" id="voiceNextBtn" onclick="nextExchangeVoice()">
+            Siguiente <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== VOZ: RESULTADO ===================== -->
+  <section id="screen-voice-result" class="practice-screen hidden">
+    <div class="result-container page-enter">
+      <div class="result-card card">
+        <div class="result-emoji" id="voiceResultEmoji"></div>
+        <h2 class="result-title" id="voiceResultTitle">Conversacion completada</h2>
+        <div class="score-display">
+          <div class="score-circle" id="voiceScoreCircle">
+            <span class="score-num" id="voiceScoreNum">0</span>
+            <span class="score-denom">/10</span>
+          </div>
+          <div class="score-label">Puntuacion en escala de 1 a 10</div>
+        </div>
+        <div class="voice-score-bar-wrap">
+          <div class="progress-bar" style="height:12px"><div class="progress-fill" id="voiceScoreBar" style="width:0%"></div></div>
+        </div>
+        <div class="result-stats">
+          <div class="rstat"><div class="rstat-num" id="voiceRCorrect">0</div><div class="rstat-lbl">Correctas</div></div>
+          <div class="rstat"><div class="rstat-num" id="voiceRSkipped">0</div><div class="rstat-lbl">Saltadas</div></div>
+          <div class="rstat"><div class="rstat-num" id="voiceRXP">0</div><div class="rstat-lbl">XP ganados</div></div>
+        </div>
+        <div class="motivational-msg" id="voiceMotivMsg"></div>
+        <div class="result-actions">
+          <button class="btn btn-primary btn-lg" onclick="retryConversation()">Intentar de nuevo</button>
+          <button class="btn btn-secondary" onclick="backToTopics()">Elegir otro tema</button>
+          <button class="btn btn-secondary" onclick="goBack()">Menu principal</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== RESULTADO FINAL (otros modulos) ===================== -->
+  <section id="screen-result" class="practice-screen hidden">
+    <div class="result-container page-enter">
+
+      <div class="result-card card">
+        <div class="result-emoji" id="resultEmoji">
+          <span class="badge badge-primary" style="font-size:1rem;padding:6px 14px">Evaluacion Registrada</span>
+        </div>
+        <h2 class="result-title" id="resultTitle">Evaluacion completada</h2>
+
+        <!-- Score en escala de 1 a 10 (Requerimiento 1.1) -->
+        <div class="score-display" id="scoreDisplay" style="display:flex;flex-direction:column;align-items:center;margin:16px 0">
+          <div class="score-circle" id="scoreCircle">
+            <span class="score-num" id="scoreNum">0</span>
+            <span class="score-denom">/10</span>
+          </div>
+          <div class="score-label" id="scoreLabel">Calificacion en escala de 1 a 10</div>
+        </div>
+
+        <!-- Estadisticas -->
+        <div class="result-stats">
+          <div class="rstat"><div class="rstat-num" id="rCorrect">0</div><div class="rstat-lbl">Correctas</div></div>
+          <div class="rstat"><div class="rstat-num" id="rWrong">0</div><div class="rstat-lbl">Incorrectas</div></div>
+          <div class="rstat"><div class="rstat-num" id="rXP">0</div><div class="rstat-lbl">XP ganados</div></div>
+        </div>
+
+        <!-- Mensaje motivacional aleatorio (Seccion 4.2) -->
+        <div class="motivational-msg" id="motivationalMsg"></div>
+
+        <!-- Botones -->
+        <div class="result-actions">
+          <button class="btn btn-primary btn-lg" onclick="retryModule()">Intentar de nuevo</button>
+          <button class="btn btn-secondary" onclick="goBack()">Elegir otro modulo</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== MODAL DE INSIGNIA ===================== -->
+  <div class="badge-modal hidden" id="badgeModal">
+    <div class="badge-modal-card card">
+      <div class="badge-modal-icon" id="badgeModalIcon">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+      </div>
+      <div class="badge-modal-title">Nueva insignia obtenida</div>
+      <div class="badge-modal-name" id="badgeModalName"></div>
+      <button class="btn btn-primary" onclick="closeBadgeModal()">Aceptar</button>
+    </div>
+  </div>
+
+  <script src="js/icons.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/exercises.js"></script>
+  <script src="js/conversation.js"></script>
+  <script src="js/practice.js"></script>
+  <script>
+    // Inicializar voces del sintetizador
+    document.addEventListener('DOMContentLoaded', loadVoices);
+  </script>
+</body>
+</html>
